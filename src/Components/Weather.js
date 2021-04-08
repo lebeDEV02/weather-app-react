@@ -15,19 +15,22 @@ export const Weather = () => {
 		weatherSwitchListener();
 	}, [])
 
-	const testDis = (inputValue) => {
-		dispatch(testDispatch(inputValue))
-	}
-
 	const value = useSelector(state => state.value)
+	const weather = useSelector(state => state.weather)
+	const temp = useSelector(state => state.temp)
+	const feels_like = useSelector(state => state.feels_like)
+	const sunrise = useSelector(state => state.sunrise)
 
 	return (
 		<section className="app">
 			<form className="app__search">
 				{value}
+				{weather}
+				{temp}
+				{feels_like}
+				{sunrise}
 				<input onChange={(e) => {
 					inputValue = e.target.value;
-					testDis(inputValue);
 				}} type="text" className="app__search-input"></input>
 				<button onClick={(e) => {
 					e.preventDefault();
