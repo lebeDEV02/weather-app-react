@@ -1,23 +1,37 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchCity } from "../asyncActions/request";
 import { tabListener, weatherSwitchListener } from "../eventListeners/listeners";
+import { testDispatch } from "../store/reducer";
+let inputValue = "";
+
+
 export const Weather = () => {
 	// useEffect for listeners. Works only once
+	const dispatch = useDispatch();
+
 	useEffect(() => {
 		tabListener();
 		weatherSwitchListener();
 	}, [])
-	useEffect(() => {
-		console.log(inputValue);
-	})
-	const [inputValue, setInputValue] = useState("");
+
+	const testDis = (inputValue) => {
+		dispatch(testDispatch(inputValue))
+	}
+
+	const value = useSelector(state => state.value)
+
 	return (
 		<section className="app">
 			<form className="app__search">
+				{value}
 				<input onChange={(e) => {
-					setInputValue(e.target.value)
+					inputValue = e.target.value;
+					testDis(inputValue);
 				}} type="text" className="app__search-input"></input>
 				<button onClick={(e) => {
 					e.preventDefault();
+					dispatch(fetchCity(inputValue))
 				}} type="submit" className="app__search-button">
 					<svg width="23" height="23" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg">
 						<path opacity="0.54" fill-rule="evenodd" clip-rule="evenodd"
