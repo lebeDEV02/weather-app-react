@@ -1,12 +1,18 @@
 export const initialState = {
-	value: "",
-	weather: "",
-	temp: "",
-	feels_like: "",
-	sunrise: "",
-	sunset: "",
-	coord: {
-		long: "",
-		lat: ""
-	}
+	general: {
+		value: "",
+		weather: "",
+		temp: "",
+		feels_like: "",
+		sunrise: "",
+		sunset: "",
+		coord: {
+			long: "",
+			lat: ""
+		},
+	},
+	additional: {
+		hourly: [],
+		daily: []
+	},
 }

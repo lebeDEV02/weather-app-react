@@ -1,34 +1,41 @@
 import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchCity } from "../asyncActions/request";
+import { useDispatch, useSelector, connect } from "react-redux";
+import { fetchAdditional, fetchCity } from "../asyncActions/request";
 import { tabListener, weatherSwitchListener } from "../eventListeners/listeners";
-import { testDispatch } from "../store/reducer";
+import { returnSunInfo, showWeatherHourly } from "../Functions/functions"
+import { store } from '../index'
+import { additionalRequestDispatch } from "../store/reducer";
 let inputValue = "";
 
 
 export const Weather = () => {
-	// useEffect for listeners. Works only once
-	const dispatch = useDispatch();
 
+	const value = useSelector(state => state.general.value)
+	const weather = useSelector(state => state.general.weather)
+	const temp = useSelector(state => state.general.temp)
+	const feels_like = useSelector(state => state.general.feels_like)
+	const sunrise = useSelector(state => state.general.sunrise)
+	const sunset = useSelector(state => state.general.sunset)
+	const lat = useSelector(state => state.general.coord.lat)
+	const lon = useSelector(state => state.general.coord.lon)
+	const daily = useSelector(state => state.additional.daily)
+	const dispatch = useDispatch();
+	// useEffect for listeners. Works only once
 	useEffect(() => {
 		tabListener();
 		weatherSwitchListener();
+		fetch('http://api.openweathermap.org/data/2.5/onecall?lat=1&lon=2&exclude=minutely, hourly&appid=f660a2fb1e4bad108d6160b7f58c555f')
+			.then(response => response.json())
+			.then(data => console.log(data))
 	}, [])
-
-	const value = useSelector(state => state.value)
-	const weather = useSelector(state => state.weather)
-	const temp = useSelector(state => state.temp)
-	const feels_like = useSelector(state => state.feels_like)
-	const sunrise = useSelector(state => state.sunrise)
-
+	useEffect(() => {
+		if (lat) {
+			dispatch(fetchAdditional(lat, lon))
+		}
+	}, [value])
 	return (
 		<section className="app">
 			<form className="app__search">
-				{value}
-				{weather}
-				{temp}
-				{feels_like}
-				{sunrise}
 				<input onChange={(e) => {
 					inputValue = e.target.value;
 				}} type="text" className="app__search-input"></input>
@@ -47,10 +54,10 @@ export const Weather = () => {
 				<div className="app__weather">
 					<div className="app__weather-infotabs">
 						<div className="app__weather-top app__weather-now app__weather-top--active">
-							<div className="weather__value"></div>
+							<div className="weather__value">{temp}</div>
 							<img className="weather__icon" src=""></img>
 							<div className="weather__info">
-								<div className="app__weather-city app__weather-city--favourite"></div>
+								<div className="app__weather-city app__weather-city--favourite">{value}</div>
 								<div className="weather__favourite">
 									<svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
 										<path opacity="0.54" fill-rule="evenodd" clip-rule="evenodd"
@@ -61,13 +68,13 @@ export const Weather = () => {
 							</div>
 						</div>
 						<div className="app__weather-top app__weather-details ">
-							<div className="app__weather-city--details"></div>
+							<div className="app__weather-city--details">{value}</div>
 							<div className="app__weather-information weather-information">
-								<p className="weather-information__temperature"></p>
-								<p className="weather-information__feelsLike"></p>
-								<p className="weather-information__weather"></p>
-								<p className="weather-information__sunrise"></p>
-								<p className="weather-information__sunset"></p>
+								<p className="weather-information__temperature">Temperature: {temp}</p>
+								<p className="weather-information__feelsLike">Feels like: {feels_like}</p>
+								<p className="weather-information__weather">Weather: {weather}</p>
+								<p className="weather-information__sunrise">Sunrise: {returnSunInfo(sunrise)}</p>
+								<p className="weather-information__sunset">Sunset: {returnSunInfo(sunset)}</p>
 							</div>
 						</div>
 						<div className="app__weather-top app__weather-forecast">
@@ -78,6 +85,9 @@ export const Weather = () => {
 								</label>
 							</div>
 							<div className="app__weather-daily">
+								{daily.map(item => {
+									return <div>{item.dt}</div>
+								})}
 							</div>
 							<div className="app__weather-hourly app__weather-hide">
 							</div>
