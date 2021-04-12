@@ -2,14 +2,14 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector, connect } from "react-redux";
 import { fetchAdditional, fetchCity } from "../asyncActions/request";
 import { tabListener, weatherSwitchListener } from "../eventListeners/listeners";
-import { returnSunInfo, showWeatherHourly } from "../Functions/functions"
-import { store } from '../index'
-import { additionalRequestDispatch } from "../store/reducer";
-let inputValue = "";
+import { returnSunInfo, returnTemperature } from "../Functions/functions"
 
+
+let inputValue = "";
 
 export const Weather = () => {
 
+	const response = useSelector(state => state.general.response)
 	const value = useSelector(state => state.general.value)
 	const weather = useSelector(state => state.general.weather)
 	const temp = useSelector(state => state.general.temp)
@@ -19,14 +19,12 @@ export const Weather = () => {
 	const lat = useSelector(state => state.general.coord.lat)
 	const lon = useSelector(state => state.general.coord.lon)
 	const daily = useSelector(state => state.additional.daily)
+	const hourly = useSelector(state => state.additional.hourly)
 	const dispatch = useDispatch();
 	// useEffect for listeners. Works only once
 	useEffect(() => {
 		tabListener();
 		weatherSwitchListener();
-		fetch('http://api.openweathermap.org/data/2.5/onecall?lat=1&lon=2&exclude=minutely, hourly&appid=f660a2fb1e4bad108d6160b7f58c555f')
-			.then(response => response.json())
-			.then(data => console.log(data))
 	}, [])
 	useEffect(() => {
 		if (lat) {
@@ -55,26 +53,26 @@ export const Weather = () => {
 					<div className="app__weather-infotabs">
 						<div className="app__weather-top app__weather-now app__weather-top--active">
 							<div className="weather__value">{temp}</div>
-							<img className="weather__icon" src=""></img>
+							{weather && <img className="weather__icon" src={`images/${weather}.svg`}></img>}
 							<div className="weather__info">
 								<div className="app__weather-city app__weather-city--favourite">{value}</div>
-								<div className="weather__favourite">
+								{temp && <div className="weather__favourite">
 									<svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
 										<path opacity="0.54" fill-rule="evenodd" clip-rule="evenodd"
 											d="M17.5 1C15.0556 1 12.8556 2.7875 12 5.125C11.1444 2.7875 8.94444 1 6.5 1C3.44444 1 1 3.6125 1 7.1875C1 12 5.27778 16.125 12 23C18.7222 16.125 23 12 23 7.1875C23 3.6125 20.5556 1 17.5 1Z"
 											stroke="black" stroke-width="2" />
 									</svg>
-								</div>
+								</div>}
 							</div>
 						</div>
 						<div className="app__weather-top app__weather-details ">
 							<div className="app__weather-city--details">{value}</div>
 							<div className="app__weather-information weather-information">
-								<p className="weather-information__temperature">Temperature: {temp}</p>
-								<p className="weather-information__feelsLike">Feels like: {feels_like}</p>
-								<p className="weather-information__weather">Weather: {weather}</p>
-								<p className="weather-information__sunrise">Sunrise: {returnSunInfo(sunrise)}</p>
-								<p className="weather-information__sunset">Sunset: {returnSunInfo(sunset)}</p>
+								<p className="weather-information__temperature">{temp ? `Temperature : ${temp}` : null}</p>
+								<p className="weather-information__feelsLike">{feels_like ? `Feels like: ${feels_like}` : null}</p>
+								<p className="weather-information__weather">{weather ? `Weather: ${weather}` : null}</p>
+								<p className="weather-information__sunrise">{sunrise ? `Sunrise: ${returnSunInfo(sunrise)}` : null}</p>
+								<p className="weather-information__sunset">{sunset ? `Sunset: ${returnSunInfo(sunset)}` : null}</p>
 							</div>
 						</div>
 						<div className="app__weather-top app__weather-forecast">
@@ -86,10 +84,43 @@ export const Weather = () => {
 							</div>
 							<div className="app__weather-daily">
 								{daily.map(item => {
-									return <div>{item.dt}</div>
+									return <div key={item.dt} className="weather-day">
+										<div className="weather-day__top">
+											<p>{`${new Date(item.dt * 1000).getDate()} ${new Date(item.dt * 1000).toLocaleString('default', { month: 'long' })}`}</p>
+											<p>{`${new Date(item.dt * 1000).getHours()}:00`}</p>
+										</div>
+										<div className="weather-day__bottom">
+											<div>
+												<p>{`Temperature: ` + returnTemperature(item.temp.eve)}</p>
+												<p>{`Feels Like: ` + returnTemperature(item.feels_like.eve)}</p>
+											</div>
+											<div className="weather-day__information">
+												<p>{item.weather[0].main}</p>
+												<img src={`images/${item.weather[0].main}.svg`} />
+											</div>
+										</div>
+									</div>
 								})}
 							</div>
 							<div className="app__weather-hourly app__weather-hide">
+								{hourly.map(item => {
+									return <div key={item.dt} className="weather-hour">
+										<div className="weather-hour__top">
+											<p>{`${new Date(item.dt * 1000).getDate()} ${new Date(item.dt * 1000).toLocaleString('default', { month: 'long' })}`}</p>
+											<p>{`${new Date(item.dt * 1000).getHours()}:00`}</p>
+										</div>
+										<div className="weather-hour__bottom">
+											<div>
+												<p>{`Temperature: ` + returnTemperature(item.temp)}</p>
+												<p>{`Feels Like: ` + returnTemperature(item.feels_like)}</p>
+											</div>
+											<div className="weather-hour__information">
+												<p>{item.weather[0].main}</p>
+												<img src={`images/${item.weather[0].main}.svg`} />
+											</div>
+										</div>
+									</div>
+								})}
 							</div>
 						</div>
 					</div>

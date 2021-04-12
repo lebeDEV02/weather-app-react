@@ -9,6 +9,7 @@ export const reducer = (state = initialState, action) => {
 			return {
 				...state,
 				general: {
+					response: action.payload.cod,
 					value: action.payload.name,
 					weather: action.payload.weather[0].main,
 					temp: returnTemperature(action.payload.main.temp),

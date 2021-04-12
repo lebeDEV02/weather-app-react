@@ -1,5 +1,6 @@
 export const initialState = {
 	general: {
+		response: "",
 		value: "",
 		weather: "",
 		temp: "",
