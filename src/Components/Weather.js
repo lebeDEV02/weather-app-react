@@ -1,11 +1,10 @@
 import React, { useEffect } from "react";
-import { useDispatch, useSelector, connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { fetchAdditional, fetchCity } from "../asyncActions/request";
 import { tabListener, weatherSwitchListener } from "../eventListeners/listeners";
 import { returnSunInfo, returnTemperature } from "../Functions/functions"
 
-
-let inputValue = "";
+export let inputValue = "";
 
 export const Weather = () => {
 
@@ -20,7 +19,7 @@ export const Weather = () => {
 	const lon = useSelector(state => state.general.coord.lon)
 	const daily = useSelector(state => state.additional.daily)
 	const hourly = useSelector(state => state.additional.hourly)
-	const dispatch = useDispatch();
+	const dispatch = useDispatch()
 	// useEffect for listeners. Works only once
 	useEffect(() => {
 		tabListener();
@@ -77,7 +76,7 @@ export const Weather = () => {
 						</div>
 						<div className="app__weather-top app__weather-forecast">
 							<div className="app__weather-forecast-top">
-								<div className="app__weather-city--forecast"></div>
+								<div className="app__weather-city--forecast">{value}</div>
 								<label className="weather-checkbox"> More information
 								<input className="weather-checkbox__more" type="checkbox"></input>
 								</label>

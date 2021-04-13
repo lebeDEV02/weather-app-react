@@ -1,11 +1,14 @@
-import { Weather } from "../Components/Weather"
 import { generalRequestDispatch, additionalRequestDispatch } from "../store/reducer"
 export const fetchCity = (requestCity) => {
 	return dispatch => {
 		fetch('http://api.openweathermap.org/data/2.5/weather?q=' + requestCity + '&appid=f660a2fb1e4bad108d6160b7f58c555f')
 			.then(response => response.json())
 			.then(data => {
-				dispatch(generalRequestDispatch(data))
+				if (data.cod === 200) {
+					dispatch(generalRequestDispatch(data))
+				} else {
+					alert('Oh, looks like you made a mistake, try again!');
+				}
 			})
 	}
 }
