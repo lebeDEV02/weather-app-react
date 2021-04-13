@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAdditional, fetchCity } from "../asyncActions/request";
-import { tabListener, weatherSwitchListener } from "../eventListeners/listeners";
+import { favouriteCityListener, tabListener, weatherSwitchListener } from "../eventListeners/listeners";
 import { returnSunInfo, returnTemperature } from "../Functions/functions"
 
 export let inputValue = "";
@@ -24,6 +24,7 @@ export const Weather = () => {
 	useEffect(() => {
 		tabListener();
 		weatherSwitchListener();
+		favouriteCityListener();
 	}, [])
 	useEffect(() => {
 		if (lat) {
