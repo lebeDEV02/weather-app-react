@@ -1,8 +1,9 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAdditional, fetchCity } from "../asyncActions/request";
-import { addedFavouriteCities, favouriteCityAddListener, favouriteCityDeleteListener, requestFromFavourite, setFilling, tabListener, weatherSwitchListener } from "../eventListeners/listeners";
-import { returnSunInfo, returnTemperature, setInputStorage } from "../Functions/functions"
+import { favouriteCityAddListener, favouriteCityDeleteListener, tabListener, weatherSwitchListener } from "../eventListeners/listeners";
+import { returnSunInfo, returnTemperature, setInputStorage, addedFavouriteCities, setFilling } from "../Functions/functions"
+
 
 export let inputValue = "";
 
@@ -20,6 +21,7 @@ export const Weather = () => {
 	const daily = useSelector(state => state.additional.daily)
 	const hourly = useSelector(state => state.additional.hourly)
 	const dispatch = useDispatch()
+
 	// useEffect for listeners. Works only once
 	useEffect(() => {
 		tabListener();
@@ -31,7 +33,6 @@ export const Weather = () => {
 		if (localStorage.getItem('inputStorage')) {
 			dispatch(fetchCity(localStorage.getItem('inputStorage')))
 		}
-		requestFromFavourite();
 		// localStorage.clear();
 	}, [])
 	useEffect(() => {
@@ -141,7 +142,14 @@ export const Weather = () => {
 				</div>
 				<div className="app__locations">
 					<p className="app__locations-added">Added Locations:</p>
-					<div className="app__locations-list">
+					<div className="app__locations-list" onClick={(e) => {
+						if (e.target.classList.contains('app__favourite-city')) {
+							e.preventDefault();
+							localStorage.removeItem('inputStorage');
+							localStorage.setItem('inputStorage', e.target.textContent.trim());
+							dispatch(fetchCity(e.target.textContent.trim()))
+						}
+					}}>
 					</div>
 				</div>
 			</div>
