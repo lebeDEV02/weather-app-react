@@ -7,7 +7,9 @@ export const fetchCity = (requestCity) => {
 				if (data.cod === 200) {
 					dispatch(generalRequestDispatch(data))
 				} else {
+					const searchInput = document.querySelector('.app__search-input');
 					alert('Oh, looks like you made a mistake, try again!');
+					searchInput.value = "";
 				}
 			})
 	}

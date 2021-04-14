@@ -22,6 +22,7 @@ export const Weather = () => {
 	const hourly = useSelector(state => state.additional.hourly)
 	const dispatch = useDispatch()
 
+
 	// useEffect for listeners. Works only once
 	useEffect(() => {
 		tabListener();
@@ -33,13 +34,17 @@ export const Weather = () => {
 		if (localStorage.getItem('inputStorage')) {
 			dispatch(fetchCity(localStorage.getItem('inputStorage')))
 		}
-		// localStorage.clear();
 	}, [])
+
+
 	useEffect(() => {
 		if (lat) {
+			localStorage.setItem('inputStorage', inputValue || value);
 			dispatch(fetchAdditional(lat, lon))
 		}
 	}, [value])
+
+
 	return (
 		<section className="app">
 			<form className="app__search">
@@ -49,7 +54,6 @@ export const Weather = () => {
 				<button onClick={(e) => {
 					e.preventDefault();
 					dispatch(fetchCity(inputValue))
-					setInputStorage(inputValue)
 				}} type="submit" className="app__search-button">
 					<svg width="23" height="23" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg">
 						<path opacity="0.54" fill-rule="evenodd" clip-rule="evenodd"
