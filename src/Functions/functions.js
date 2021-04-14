@@ -5,3 +5,8 @@ export const returnSunInfo = (s) => {
 export const returnTemperature = (temp) => {
 	return `${Math.round(temp - 273)}°`
 }
+export const setInputStorage = (inputValue) => {
+	if (inputValue) {
+		localStorage.setItem('inputStorage', inputValue);
+	}
+}

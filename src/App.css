@@ -112,7 +112,7 @@ input, button, textarea, select {
 .weather__info {
 	display: flex;
 	justify-content: space-between;
-	margin: 40px 0px 20px 0px;
+	margin: auto 0px 20px 0px;
 }
 
 .app__locations {

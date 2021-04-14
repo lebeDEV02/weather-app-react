@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAdditional, fetchCity } from "../asyncActions/request";
-import { favouriteCityListener, tabListener, weatherSwitchListener } from "../eventListeners/listeners";
-import { returnSunInfo, returnTemperature } from "../Functions/functions"
+import { addedFavouriteCities, favouriteCityAddListener, favouriteCityDeleteListener, requestFromFavourite, setFilling, tabListener, weatherSwitchListener } from "../eventListeners/listeners";
+import { returnSunInfo, returnTemperature, setInputStorage } from "../Functions/functions"
 
 export let inputValue = "";
 
@@ -24,7 +24,15 @@ export const Weather = () => {
 	useEffect(() => {
 		tabListener();
 		weatherSwitchListener();
-		favouriteCityListener();
+		favouriteCityAddListener();
+		favouriteCityDeleteListener();
+		setFilling();
+		addedFavouriteCities();
+		if (localStorage.getItem('inputStorage')) {
+			dispatch(fetchCity(localStorage.getItem('inputStorage')))
+		}
+		requestFromFavourite();
+		// localStorage.clear();
 	}, [])
 	useEffect(() => {
 		if (lat) {
@@ -40,6 +48,7 @@ export const Weather = () => {
 				<button onClick={(e) => {
 					e.preventDefault();
 					dispatch(fetchCity(inputValue))
+					setInputStorage(inputValue)
 				}} type="submit" className="app__search-button">
 					<svg width="23" height="23" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg">
 						<path opacity="0.54" fill-rule="evenodd" clip-rule="evenodd"
@@ -56,13 +65,13 @@ export const Weather = () => {
 							{weather && <img className="weather__icon" src={`images/${weather}.svg`}></img>}
 							<div className="weather__info">
 								<div className="app__weather-city app__weather-city--favourite">{value}</div>
-								{temp && <div className="weather__favourite">
+								<div className="weather__favourite">
 									<svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
 										<path opacity="0.54" fill-rule="evenodd" clip-rule="evenodd"
 											d="M17.5 1C15.0556 1 12.8556 2.7875 12 5.125C11.1444 2.7875 8.94444 1 6.5 1C3.44444 1 1 3.6125 1 7.1875C1 12 5.27778 16.125 12 23C18.7222 16.125 23 12 23 7.1875C23 3.6125 20.5556 1 17.5 1Z"
 											stroke="black" stroke-width="2" />
 									</svg>
-								</div>}
+								</div>
 							</div>
 						</div>
 						<div className="app__weather-top app__weather-details ">
